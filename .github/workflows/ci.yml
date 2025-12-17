@@ -70,7 +70,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install --upgrade pip
+          pip install --upgrade --force-reinstall pip==25.1.1
           pip install resdet --no-index --find-links dist --force-reinstall
           pip install pytest Pillow
           cd resdet-py && pytest
@@ -210,7 +210,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/Scripts/activate
-          pip install --upgrade pip
+          pip install --upgrade --force-reinstall pip==25.1.1
           pip install resdet --no-index --find-links dist --force-reinstall
           pip install pytest Pillow
           cd resdet-py && pytest
@@ -257,7 +257,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/bin/activate
-          pip install --upgrade pip
+          pip install --upgrade --force-reinstall pip==25.1.1
           pip install resdet --no-index --find-links dist --force-reinstall
           pip install pytest Pillow
           cd resdet-py && pytest
