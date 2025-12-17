@@ -27,3 +27,8 @@ thiserror = "2.0.17"
 # python bindings
 pyo3 = { version = "0.27.2", features = ["extension-module"] }
 rayon = "1.11.0"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1

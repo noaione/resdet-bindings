@@ -1,0 +1,224 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - '*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  manylinux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-24.04
+            target: x86_64
+          - runner: ubuntu-24.04
+            target: x86
+          - runner: ubuntu-24.04
+            target: aarch64
+          # - runner: ubuntu-22.04
+          #   target: armv7
+          # - runner: ubuntu-22.04
+          #   target: s390x
+          # - runner: ubuntu-22.04
+          #   target: ppc64le
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.x
+      - name: Rust Target
+        run: |
+          rustup update stable
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: >
+            --release
+            --out dist
+            --manifest-path resdet-py/Cargo.toml
+            -i python3.10 python3.11 python3.12 python3.13
+          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          manylinux: auto
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-linux-${{ matrix.platform.target }}
+          path: dist
+
+  musllinux:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: ubuntu-24.04
+            target: x86_64
+          - runner: ubuntu-24.04
+            target: x86
+          - runner: ubuntu-24.04
+            target: aarch64
+          # - runner: ubuntu-22.04
+          #   target: armv7
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.x
+      - name: Rust Target
+        run: |
+          rustup update stable
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: >
+            --release
+            --out dist
+            --manifest-path resdet-py/Cargo.toml
+            -i python3.10 python3.11 python3.12 python3.13
+          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          manylinux: musllinux_1_2
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-musllinux-${{ matrix.platform.target }}
+          path: dist
+
+  windows:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: windows-2025
+            target: x64
+          - runner: windows-2025
+            target: x86
+          # - runner: windows-11-arm # Currently broken
+          #   target: arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.x
+          architecture: ${{ matrix.platform.target }}
+      - name: Rust Target
+        run: |
+          rustup update stable
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: >
+            --release
+            --out dist
+            --manifest-path resdet-py/Cargo.toml
+            -i python3.10 python3.11 python3.12 python3.13
+          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-windows-${{ matrix.platform.target }}
+          path: dist
+
+  macos:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: macos-15-intel
+            target: x86_64
+          - runner: macos-26
+            target: aarch64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.x
+      - name: Rust Target
+        run: |
+          rustup update stable
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.platform.target }}
+          args: >
+            --release
+            --out dist
+            --manifest-path resdet-py/Cargo.toml
+            -i python3.10 python3.11 python3.12 python3.13
+          sccache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+      - name: Upload wheels
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-macos-${{ matrix.platform.target }}
+          path: dist
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Rust Target
+        run: |
+          rustup update stable
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist --manifest-path resdet-py/Cargo.toml
+      - name: Upload sdist
+        uses: actions/upload-artifact@v6
+        with:
+          name: wheels-sdist
+          path: dist
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: ${{ startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' }}
+    needs: [manylinux, musllinux, windows, macos, sdist]
+    permissions:
+      # Use to sign the release artifacts
+      id-token: write
+      # Used to upload release artifacts
+      contents: write
+      # Used to generate artifact attestation
+      attestations: write
+    steps:
+      - name: Download wheels artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: dist
+          pattern: wheels-*
+          merge-multiple: true
+      - name: Generate artifacts attestation
+        uses: actions/attest-build-provenance@v3
+        with:
+          subject-path: dist/*
+      - name: Publish to PyPI
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        uses: pypa/gh-action-pypi-publish@3317ede93a4981d0fc490510c6fcf8bf0e92ed05
+        with:
+          attestations: true
+          packages-dir: dist
+          verify-metadata: true
+          skip-existing: true
+          print-hash: true
