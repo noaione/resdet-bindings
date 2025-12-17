@@ -28,10 +28,16 @@ fn main() {
 fn build_resdet_with_cc(resdet_dir: &Path) -> PathBuf {
     let mut build = cc::Build::new();
 
+    let std_flags = if cfg!(target_env = "msvc") {
+        "c11"
+    } else {
+        "c99"
+    };
+
     // -std=c99 -pedantic -O3 -march=native -mtune=native -Wall -Werror
     // DEFS= -DUSE_BUILTIN_SIGNBIT
     build
-        .std("c99")
+        .std(std_flags)
         .warnings(false)
         .define("USE_BUILTIN_SIGNBIT", None);
 
