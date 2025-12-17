@@ -1,17 +1,18 @@
 [package]
 name = "resdet-py"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
 license = "MIT AND LGPL-2.1"
 description = "Safe Python bindings to libresdet for detecting upscaled images"
-repository = "https://github.com/noaione/resdet-bindings"
-keywords = ["image", "upscaling", "detection", "resdet"]
-categories = ["multimedia::images"]
 
 [dependencies]
-pyo3 = { version = "0.27.2", features = ["extension-module"] }
+pyo3.workspace = true
+rayon.workspace = true
 resdet = { path = "../resdet" }
-rayon = "1.11.0"
 
 [lib]
 name = "_resdet"

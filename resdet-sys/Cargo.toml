@@ -1,20 +1,23 @@
 [package]
 name = "resdet-sys"
-version = "0.1.0"
-edition = "2021"
-authors = ["noaione"]
-license = "MIT"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+license = "MIT AND LGPL-2.1"
 description = "Low-level FFI bindings to libresdet"
-repository = "https://github.com/noaione/resdet-bindings"
+
 links = "resdet"
 include = [
     "src/**/*",
     "resdet/**/*",
-    "../LICENSE",
-    "resdet/COPYING.LGPL.txt"
+    "../LICENSE-MIT",
+    "../LICENSE-LGPL"
 ]
 
 [dependencies]
 
 [build-dependencies]
-cc = "1.2.49"
+cc.workspace = true

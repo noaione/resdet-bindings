@@ -5,3 +5,25 @@ members = [
     "resdet-sys",
     "resdet-py",
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+authors = ["noaione <noaione@n4o.xyz>"]
+license = "MIT"
+repository = "https://github.com/noaione/resdet-bindings"
+homepage = "https://github.com/noaione/resdet-bindings"
+rust-version = "1.88.0"
+keywords = ["image", "upscaling", "detection", "resdet"]
+categories = ["multimedia::images"]
+
+[workspace.dependencies]
+# sys related
+cc = "1.2.49"
+
+# rust bindings
+thiserror = "2.0.17"
+
+# python bindings
+pyo3 = { version = "0.27.2", features = ["extension-module"] }
+rayon = "1.11.0"
