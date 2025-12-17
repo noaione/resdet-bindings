@@ -70,6 +70,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/bin/activate
+          pip install --upgrade pip
           pip install resdet --no-index --find-links dist --force-reinstall
           pip install pytest Pillow
           cd resdet-py && pytest
@@ -78,7 +79,7 @@ jobs:
         uses: uraimo/run-on-arch-action@v2
         with:
           arch: ${{ matrix.platform.target }}
-          distro: ubuntu22.04
+          distro: ubuntu24.04
           githubToken: ${{ github.token }}
           install: |
             apt-get update
@@ -209,6 +210,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/Scripts/activate
+          pip install --upgrade pip
           pip install resdet --no-index --find-links dist --force-reinstall
           pip install pytest Pillow
           cd resdet-py && pytest
@@ -255,6 +257,7 @@ jobs:
           set -e
           python3 -m venv .venv
           source .venv/bin/activate
+          pip install --upgrade pip
           pip install resdet --no-index --find-links dist --force-reinstall
           pip install pytest Pillow
           cd resdet-py && pytest
