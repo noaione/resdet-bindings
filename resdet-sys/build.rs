@@ -34,12 +34,15 @@ fn build_resdet_with_cc(resdet_dir: &Path) -> PathBuf {
         "c99"
     };
 
+    let has_signbit = detect_signbit(std_flags);
+
     // -std=c99 -pedantic -O3 -march=native -mtune=native -Wall -Werror
     // DEFS= -DUSE_BUILTIN_SIGNBIT
-    build
-        .std(std_flags)
-        .warnings(false)
-        .define("USE_BUILTIN_SIGNBIT", None);
+    build.std(std_flags).warnings(false);
+
+    if has_signbit {
+        build.define("USE_BUILTIN_SIGNBIT", None);
+    }
 
     let lib_dir = resdet_dir.join("lib");
     let include_dir = resdet_dir.join("include");
@@ -81,4 +84,17 @@ fn build_resdet_with_cc(resdet_dir: &Path) -> PathBuf {
     build.compile("resdet"); // libresdet.a
 
     PathBuf::from(env::var("OUT_DIR").unwrap())
+}
+
+fn detect_signbit(stdf: &str) -> bool {
+    // try to compile with __builtin_signbit
+    let mut build = cc::Build::new();
+    let is_compiled = build
+        .std(stdf)
+        .warnings(false)
+        .file("wrapper_test.c")
+        .flag_if_supported("-fsyntax-only")
+        .flag_if_supported("/Zs") // -fsyntax-only for MSVC
+        .try_compile_intermediates();
+    is_compiled.is_ok()
 }

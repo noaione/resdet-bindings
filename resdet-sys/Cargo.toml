@@ -14,7 +14,8 @@ include = [
     "src/**/*",
     "resdet/**/*",
     "../LICENSE-MIT",
-    "../LICENSE-LGPL"
+    "../LICENSE-LGPL",
+    "./wrapper_test.c"
 ]
 
 [dependencies]
