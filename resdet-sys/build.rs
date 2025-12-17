@@ -71,6 +71,5 @@ fn build_resdet_with_cc(resdet_dir: &Path) -> PathBuf {
 
     build.compile("resdet"); // libresdet.a
 
-    let output_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    output_dir
+    PathBuf::from(env::var("OUT_DIR").unwrap())
 }

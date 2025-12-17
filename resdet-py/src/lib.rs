@@ -76,7 +76,7 @@ impl Analysis {
 
         if let Some(threshold) = self.threshold {
             // if threshold not in 0.0..=1.0, return error
-            if threshold < 0.0 || threshold > 1.0 {
+            if !(0.0..=1.0).contains(&threshold) {
                 return Err(PyValueError::new_err(
                     "threshold must be between 0.0 and 1.0",
                 ));
@@ -201,13 +201,6 @@ fn lib_version() -> PyResult<String> {
 fn normalize_image_gray(image: Vec<u8>) -> PyResult<Vec<f32>> {
     if image.is_empty() {
         return Err(PyValueError::new_err("Input image data is empty"));
-    }
-
-    // check layout (must be 1)
-    if image.len() % 1 != 0 {
-        return Err(PyValueError::new_err(
-            "Input image data length is not compatible with grayscale layout",
-        ));
     }
 
     // do fast normalization
