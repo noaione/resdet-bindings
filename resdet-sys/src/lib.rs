@@ -66,15 +66,6 @@ extern "C" {
         threshold: c_float,
     ) -> RDError;
 
-    pub fn resdet_open_image(
-        filename: *const c_char,
-        type_: *const c_char,
-        width: *mut usize,
-        height: *mut usize,
-        imagebuf: *mut *mut c_float,
-        error: *mut RDError,
-    ) -> *mut RDImage;
-
     pub fn resdet_read_image_frame(
         image: *mut RDImage,
         image_buf: *mut c_float,
@@ -90,15 +81,6 @@ extern "C" {
     ) -> bool;
 
     pub fn resdet_close_image(image: *mut RDImage);
-
-    pub fn resdet_read_image(
-        filename: *const c_char,
-        filetype: *const c_char,
-        image: *mut *mut c_float,
-        nimages: *mut usize,
-        width: *mut usize,
-        height: *mut usize,
-    ) -> RDError;
 
     pub fn resdet_create_analysis(
         method: *mut RDMethod,
@@ -125,17 +107,6 @@ extern "C" {
         nimages: usize,
         width: usize,
         height: usize,
-        resw: *mut *mut RDResolution,
-        countw: *mut usize,
-        resh: *mut *mut RDResolution,
-        counth: *mut usize,
-        method: *mut RDMethod,
-        params: *const RDParameters,
-    ) -> RDError;
-
-    pub fn resdetect_file(
-        filename: *const c_char,
-        filetype: *const c_char,
         resw: *mut *mut RDResolution,
         countw: *mut usize,
         resh: *mut *mut RDResolution,
