@@ -5,10 +5,12 @@ fn main() {
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let resdet_dir = manifest_dir.join("resdet");
 
-    let (_, lib_dir) = build_resdet(&resdet_dir);
+    // LDLIBS= -lm
+    println!("cargo:rustc-link-lib=m");
+    let out_dir = build_resdet_with_cc(&resdet_dir);
 
     // Tell cargo to link the static library
-    println!("cargo:rustc-link-search=native={}", lib_dir.display());
+    println!("cargo:rustc-link-search=native={}", out_dir.display());
     println!("cargo:rustc-link-lib=static=resdet");
 
     // Tell cargo to re-run if these files change
@@ -20,56 +22,55 @@ fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 }
 
-fn build_resdet(resdet_dir: &Path) -> (PathBuf, PathBuf) {
-    // build the resdet into rust OUT dir
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let output_dir = out_dir.join("resdet");
-    let include_dir = output_dir.join("include");
-    let lib_dir = output_dir.join("lib");
+fn build_resdet_with_cc(resdet_dir: &Path) -> PathBuf {
+    let mut build = cc::Build::new();
 
-    // make dir
-    std::fs::create_dir_all(&output_dir).expect("Failed to create output directory");
-    std::fs::create_dir_all(&include_dir).expect("Failed to create bin directory");
-    std::fs::create_dir_all(&lib_dir).expect("Failed to create lib directory");
+    // -std=c99 -pedantic -O3 -march=native -mtune=native -Wall -Werror
+    // DEFS= -DUSE_BUILTIN_SIGNBIT
+    build
+        .std("c99")
+        .warnings(false)
+        .define("USE_BUILTIN_SIGNBIT", None);
 
-    // Run configure with --disable-everything to only build the core library
-    let configure_status = std::process::Command::new("sh")
-        .arg("configure")
-        .arg("--disable-everything")
-        .current_dir(&resdet_dir)
-        .arg(format!("--prefix={}", output_dir.display()))
-        .status()
-        .expect("Failed to run configure");
+    let lib_dir = resdet_dir.join("lib");
+    let include_dir = resdet_dir.join("include");
 
-    if !configure_status.success() {
-        panic!("configure failed");
+    build
+        .include(&lib_dir)
+        .include(&include_dir)
+        .include(lib_dir.join("kissfft"));
+
+    // core Files (OBJS=resdet.o image.o methods.o image/y4m.o)
+    let core_sources = vec![
+        "lib/resdet.c",
+        "lib/image.c",
+        "lib/methods.c",
+        "lib/image/y4m.c",
+    ];
+
+    // native Image Readers (ifndef OMIT_NATIVE_PGM_PFM_READERS)
+    let native_readers = vec!["lib/image/pgm.c", "lib/image/pfm.c"];
+
+    // KissFFT Fallback (else block of HAVE_FFTW)
+    let kiss_fft_sources = vec![
+        "lib/transform/kiss_fft.c",
+        "lib/kissfft/kiss_fft.c",
+        "lib/kissfft/kiss_fftnd.c",
+        "lib/kissfft/kiss_fftndr.c",
+        "lib/kissfft/kiss_fftr.c",
+    ];
+
+    // add all sources to the build
+    for src in core_sources
+        .into_iter()
+        .chain(native_readers)
+        .chain(kiss_fft_sources)
+    {
+        build.file(resdet_dir.join(src));
     }
 
-    // clean -> build -> install-lib
-    let make_clean_status = std::process::Command::new("make")
-        .arg("clean")
-        .current_dir(&resdet_dir)
-        .status()
-        .expect("Failed to run make clean");
-    if !make_clean_status.success() {
-        panic!("make clean failed");
-    }
-    let make_build_status = std::process::Command::new("make")
-        .arg("lib/libresdet.a")
-        .current_dir(&resdet_dir)
-        .status()
-        .expect("Failed to run make");
-    if !make_build_status.success() {
-        panic!("make failed");
-    }
-    let make_install_status = std::process::Command::new("make")
-        .arg("install-lib")
-        .current_dir(&resdet_dir)
-        .status()
-        .expect("Failed to run make install");
-    if !make_install_status.success() {
-        panic!("make install failed");
-    }
+    build.compile("resdet"); // libresdet.a
 
-    (include_dir, lib_dir)
+    let output_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    output_dir
 }
