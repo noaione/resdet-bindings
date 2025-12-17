@@ -8,6 +8,7 @@ keywords.workspace = true
 categories.workspace = true
 license = "MIT AND LGPL-2.1"
 description = "Safe Python bindings to libresdet for detecting upscaled images"
+readme = "README.md"
 
 [dependencies]
 pyo3.workspace = true

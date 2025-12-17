@@ -11,6 +11,5 @@
         "**/.*",
         "**/.venv/**",
         "resdet-sys/resdet"
-    ],
-    "python.defaultInterpreterPath": "${workspaceDir}/resdet-py/.venv/bin/python3"
+    ]
 }
