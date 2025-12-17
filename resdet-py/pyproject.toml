@@ -7,13 +7,14 @@ authors = [
 maintainers = [
     {name = "noaione", email = "noaione@n4o.xyz"},
 ]
-license = { text = "MPL-2.0" }
-keywords = ["utilities", "timestring", "mathexpr", "rust"]
+license = { text = "MIT" }
+keywords = ["image", "detection", "resdet", "resolution", "upscaling"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
-    "License :: OSI Approved :: MPL 2.0 License",
+    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPL)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -23,17 +24,16 @@ classifiers = [
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
-    "Private :: Do Not Upload",
     "Typing :: Typed",
 ]
 requires-python = ">=3.10,<3.14"
 dynamic = ["version", "readme"]
 
 [project.urls]
-Homepage = "https://naoti.me"
-Repository = "https://github.com/naoTimesdev/fastnomicon.git"
-Issues = "https://github.com/naoTimesdev/fastnomicon/issues"
-Changelog = "https://github.com/naoTimesdev/fastnomicon/blob/master/CHANGELOG.md"
+Homepage = "https://github.com/noaione/resdet-bindings"
+Repository = "https://github.com/noaione/resdet-bindings.git"
+Issues = "https://github.com/noaione/resdet-bindings/issues"
+Changelog = "https://github.com/noaione/resdet-bindings/blob/master/CHANGELOG.md"
 
 [build-system]
 requires = ["maturin>=1,<2"]
@@ -43,6 +43,7 @@ build-backend = "maturin"
 python-source = "src-maturin"
 module-name = "resdet._resdet"
 bindings = "pyo3"
+include = ["LICENSE-MIT", "LICENSE-LGPL"]
 
 [tool.ruff]
 line-length = 120

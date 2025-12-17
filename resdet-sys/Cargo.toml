@@ -3,9 +3,15 @@ name = "resdet-sys"
 version = "0.1.0"
 edition = "2021"
 authors = ["noaione"]
-license = "MIT OR Apache-2.0"
+license = "MIT"
 description = "Low-level FFI bindings to libresdet"
 repository = "https://github.com/noaione/resdet-bindings"
 links = "resdet"
+include = [
+    "src/**/*",
+    "resdet/**/*",
+    "../LICENSE",
+    "resdet/COPYING.LGPL.txt"
+]
 
 [dependencies]
