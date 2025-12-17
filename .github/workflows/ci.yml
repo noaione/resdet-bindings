@@ -27,7 +27,7 @@ jobs:
             target: x86_64
           - runner: ubuntu-24.04
             target: x86
-          - runner: ubuntu-24.04
+          - runner: ubuntu-24.04-arm
             target: aarch64
           # - runner: ubuntu-22.04
           #   target: armv7
@@ -64,7 +64,7 @@ jobs:
           name: wheels-linux-${{ matrix.platform.target }}
           path: dist
       - name: pytest
-        if: ${{ startsWith(matrix.platform.target, 'x86_64') }}
+        if: ${{ startsWith(matrix.platform.target, 'x86_64') || matrix.platform.target == 'aarch64' }}
         shell: bash
         run: |
           set -e
@@ -74,7 +74,7 @@ jobs:
           pip install pytest Pillow
           cd resdet-py && pytest
       - name: pytest
-        if: ${{ !startsWith(matrix.platform.target, 'x86') && matrix.platform.target != 'ppc64' }}
+        if: ${{ !startsWith(matrix.platform.target, 'x86') && matrix.platform.target != 'ppc64' && matrix.platform.target != 'aarch64' }}
         uses: uraimo/run-on-arch-action@v2
         with:
           arch: ${{ matrix.platform.target }}
@@ -318,6 +318,7 @@ jobs:
           verify-metadata: true
           skip-existing: true
           print-hash: true
+          verbose: true
       - name: Publish to TestPyPI
         if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: pypa/gh-action-pypi-publish@3317ede93a4981d0fc490510c6fcf8bf0e92ed05
@@ -328,3 +329,4 @@ jobs:
           verify-metadata: true
           skip-existing: true
           print-hash: true
+          verbose: true
