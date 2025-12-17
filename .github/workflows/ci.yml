@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: true
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
@@ -74,6 +76,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: true
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
@@ -112,6 +116,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: true
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
@@ -148,6 +154,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: true
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
@@ -176,6 +184,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: true
       - name: Rust Target
         run: |
           rustup update stable
@@ -203,6 +213,8 @@ jobs:
       # Used to generate artifact attestation
       attestations: write
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
       - name: Download wheels artifacts
         uses: actions/download-artifact@v7
         with:
