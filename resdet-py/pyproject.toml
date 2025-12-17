@@ -115,3 +115,4 @@ section-order = ["future", "standard-library", "third-party", "first-party", "lo
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401", "F403", "I002", "D205"]
+"tests/*" = ["S101", "I002"]

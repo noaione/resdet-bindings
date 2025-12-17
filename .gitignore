@@ -16,3 +16,5 @@ env/
 *.a
 *.dll
 __pycache__/
+
+!resdet-py/tests/*.png
