@@ -10,17 +10,20 @@ maintainers = [
 license = { text = "MIT" }
 keywords = ["image", "detection", "resdet", "resolution", "upscaling"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering :: Image Processing",
     "License :: OSI Approved :: MIT License",
-    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPL)",
+    "License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Free Threading",
+    "Programming Language :: Python :: Free Threading :: 2 - Beta",
+    "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
     "Operating System :: POSIX :: Linux",
     "Operating System :: Microsoft :: Windows",
@@ -31,10 +34,10 @@ requires-python = ">=3.10,<3.15"
 dynamic = ["version", "readme"]
 
 [project.urls]
-Homepage = "https://github.com/noaione/resdet-bindings"
-Repository = "https://github.com/noaione/resdet-bindings.git"
-Issues = "https://github.com/noaione/resdet-bindings/issues"
-Changelog = "https://github.com/noaione/resdet-bindings/blob/master/CHANGELOG.md"
+homepage = "https://github.com/noaione/resdet-bindings"
+repository = "https://github.com/noaione/resdet-bindings.git"
+issues = "https://github.com/noaione/resdet-bindings/issues"
+changelog = "https://github.com/noaione/resdet-bindings/blob/master/CHANGELOG.md"
 
 [build-system]
 requires = ["maturin>=1,<2"]
