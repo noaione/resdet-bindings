@@ -46,7 +46,7 @@ pub struct RDImage {
     _private: [u8; 0],
 }
 
-extern "C" {
+unsafe extern "C" {
     pub fn resdet_libversion() -> *const c_char;
 
     pub fn resdet_error_str(error: RDError) -> *const c_char;
