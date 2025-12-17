@@ -6,7 +6,10 @@ fn main() {
     let resdet_dir = manifest_dir.join("resdet");
 
     // LDLIBS= -lm
-    println!("cargo:rustc-link-lib=m");
+    // do not include libm on Windows MSVC
+    if !cfg!(target_env = "msvc") {
+        println!("cargo:rustc-link-lib=m");
+    }
     let out_dir = build_resdet_with_cc(&resdet_dir);
 
     // Tell cargo to link the static library
