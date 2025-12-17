@@ -90,9 +90,23 @@ class DetectionResult:
         ...
 
 class Analysis:
-    """Analyze images to detect their source resolution."""
+    """
+    Analyze images to detect their source resolution.
 
-    def __init__(self) -> None: ...
+    Thread Safety
+    -------------
+    This class *should* be thread-safe, allowing concurrent analyses
+    from multiple threads.
+
+    BUT, when trying to use it in multi-thread context, make sure you
+    did not change any parameters while another thread is using it,
+    since this would result in a BorrowError.
+    """
+
+    def __init__(self) -> None:
+        """Initialize a new Analysis instance with default parameters."""
+        ...
+
     @property
     def range(self) -> int:
         """

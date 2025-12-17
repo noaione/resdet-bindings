@@ -1,10 +1,12 @@
+use std::sync::atomic::{AtomicUsize, Ordering};
+
 use pyo3::{
     exceptions::{PyRuntimeError, PyValueError},
     prelude::*,
 };
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
-#[pymodule]
+#[pymodule(gil_used = false)]
 fn _resdet(m: &Bound<'_, PyModule>) -> PyResult<()> {
     // Metadata
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
@@ -20,7 +22,7 @@ fn _resdet(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
 #[pyclass]
 struct Analysis {
-    range: usize,
+    range: AtomicUsize,
     threshold: Option<f32>,
 }
 
@@ -29,19 +31,19 @@ impl Analysis {
     #[new]
     fn new() -> Self {
         Analysis {
-            range: resdet::default_range(),
+            range: AtomicUsize::new(resdet::default_range()),
             threshold: None,
         }
     }
 
     #[getter]
     fn range(&self) -> usize {
-        self.range
+        self.range.load(Ordering::Relaxed)
     }
 
     #[setter]
-    fn set_range(&mut self, range: usize) {
-        self.range = range;
+    fn set_range(&self, range: usize) {
+        self.range.store(range, Ordering::Relaxed);
     }
 
     #[getter]
@@ -58,7 +60,8 @@ impl Analysis {
     fn __repr__(&self) -> PyResult<String> {
         Ok(format!(
             "Analysis(range={}, threshold={:?})",
-            self.range, self.threshold
+            self.range(),
+            self.threshold
         ))
     }
 
@@ -90,7 +93,7 @@ impl Analysis {
         validate_frame_data(&frame_data, width, height)?;
 
         default_params
-            .set_range(self.range)
+            .set_range(self.range())
             .map_err(transform_error)?;
 
         let detected = resdet::detect(&frame_data, width, height, None, Some(&default_params))
