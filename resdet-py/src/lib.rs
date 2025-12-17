@@ -76,7 +76,7 @@ impl Analysis {
 
         if let Some(threshold) = self.threshold {
             // if threshold not in 0.0..=1.0, return error
-            if !(0.0..=1.0).contains(&threshold) {
+            if !is_norm_value(threshold) {
                 return Err(PyValueError::new_err(
                     "threshold must be between 0.0 and 1.0",
                 ));
@@ -86,6 +86,8 @@ impl Analysis {
                 .set_threshold(threshold)
                 .map_err(transform_error)?;
         }
+
+        validate_frame_data(&frame_data, width, height)?;
 
         default_params
             .set_range(self.range)
@@ -187,11 +189,6 @@ impl From<resdet::DetectionResult> for DetectionResult {
     }
 }
 
-fn transform_error(err: resdet::ResdetError) -> PyErr {
-    let err_str = err.to_string();
-    PyRuntimeError::new_err(err_str)
-}
-
 #[pyfunction]
 fn lib_version() -> PyResult<String> {
     resdet::lib_version().map_err(transform_error)
@@ -210,4 +207,38 @@ fn normalize_image_gray(image: Vec<u8>) -> PyResult<Vec<f32>> {
         .collect();
 
     Ok(normalized)
+}
+
+fn transform_error(err: resdet::ResdetError) -> PyErr {
+    let err_str = err.to_string();
+    PyRuntimeError::new_err(err_str)
+}
+
+fn validate_frame_data(frame_data: &[f32], width: usize, height: usize) -> PyResult<()> {
+    let expected_size = width
+        .checked_mul(height)
+        .ok_or_else(|| PyValueError::new_err("Width * Height overflowed"))?;
+
+    if frame_data.len() != expected_size {
+        return Err(PyValueError::new_err(format!(
+            "Frame data length ({}) does not match expected size (width: {}, height: {}, expected: {})",
+            frame_data.len(),
+            width,
+            height,
+            expected_size
+        )));
+    }
+
+    // Check if all values are in 0.0..=1.0
+    if !frame_data.par_iter().all(|&v| is_norm_value(v)) {
+        return Err(PyValueError::new_err(
+            "Frame data contains values outside the range [0.0, 1.0]",
+        ));
+    }
+
+    Ok(())
+}
+
+fn is_norm_value(v: f32) -> bool {
+    (0.0..=1.0).contains(&v)
 }
