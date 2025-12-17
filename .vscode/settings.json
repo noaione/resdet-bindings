@@ -1,5 +1,14 @@
 {
     "[rust]": {
         "editor.formatOnSave": true
-    }
+    },
+    "python.analysis.exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        ".git",
+        "**/build",
+        "env/**",
+        "**/.venv/**",
+        "resdet-sys/resdet"
+    ]
 }

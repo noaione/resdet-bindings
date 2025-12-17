@@ -40,7 +40,7 @@ fn build_resdet_with_cc(resdet_dir: &Path) -> PathBuf {
         .include(&include_dir)
         .include(lib_dir.join("kissfft"));
 
-    // core Files (OBJS=resdet.o image.o methods.o image/y4m.o)
+    // core files (OBJS=resdet.o image.o methods.o image/y4m.o)
     let core_sources = vec![
         "lib/resdet.c",
         "lib/image.c",
@@ -48,10 +48,10 @@ fn build_resdet_with_cc(resdet_dir: &Path) -> PathBuf {
         "lib/image/y4m.c",
     ];
 
-    // native Image Readers (ifndef OMIT_NATIVE_PGM_PFM_READERS)
+    // native image readers (ifndef OMIT_NATIVE_PGM_PFM_READERS)
     let native_readers = vec!["lib/image/pgm.c", "lib/image/pfm.c"];
 
-    // KissFFT Fallback (else block of HAVE_FFTW)
+    // KissFFT fallback (else block of HAVE_FFTW)
     let kiss_fft_sources = vec![
         "lib/transform/kiss_fft.c",
         "lib/kissfft/kiss_fft.c",
