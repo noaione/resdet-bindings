@@ -1,0 +1,16 @@
+[package]
+name = "resdet"
+version = "0.1.0"
+edition = "2021"
+authors = ["noaione"]
+license = "MIT OR Apache-2.0"
+description = "Safe Rust bindings to libresdet for detecting upscaled images"
+repository = "https://github.com/noaione/resdet-bindings"
+keywords = ["image", "upscaling", "detection", "resdet"]
+categories = ["multimedia::images"]
+
+[dependencies]
+resdet-sys = { path = "../resdet-sys" }
+thiserror = "2.0"
+
+[dev-dependencies]

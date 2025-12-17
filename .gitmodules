@@ -1,0 +1,3 @@
+[submodule "resdet-sys/resdet"]
+	path = resdet-sys/resdet
+	url = https://github.com/0x09/resdet.git
