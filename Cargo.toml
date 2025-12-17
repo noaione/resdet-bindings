@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "resdet",
     "resdet-sys",
-    "resdet-rs",
+    "resdet-py",
 ]

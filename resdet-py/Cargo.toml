@@ -1,0 +1,14 @@
+[package]
+name = "resdet-py"
+version = "0.1.0"
+edition = "2024"
+
+
+[dependencies]
+pyo3 = { version = "0.27.2", features = ["extension-module"] }
+resdet = { path = "../resdet" }
+rayon = "1.11.0"
+
+[lib]
+name = "_resdet"
+crate-type = ["cdylib"]
