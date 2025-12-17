@@ -143,7 +143,7 @@ jobs:
             python3 -m virtualenv .venv
             source .venv/bin/activate
             pip install resdet --no-index --find-links dist --force-reinstall
-            pip install pytest
+            pip install pytest Pillow
             cd resdet-py && pytest
       - name: pytest
         if: ${{ !startsWith(matrix.platform.target, 'x86') }}
@@ -158,8 +158,8 @@ jobs:
             set -e
             python3 -m virtualenv .venv
             source .venv/bin/activate
-            pip install pytest
             pip install resdet --find-links dist --force-reinstall
+            pip install pytest Pillow
             cd resdet-py && pytest
 
   windows:
@@ -210,7 +210,7 @@ jobs:
           python3 -m venv .venv
           source .venv/Scripts/activate
           pip install resdet --find-links dist --force-reinstall
-          pip install pytest
+          pip install pytest Pillow
           cd resdet-py && pytest
 
   macos:
@@ -256,7 +256,7 @@ jobs:
           python3 -m venv .venv
           source .venv/bin/activate
           pip install resdet --find-links dist --force-reinstall
-          pip install pytest
+          pip install pytest Pillow
           cd resdet-py && pytest
 
   sdist:
